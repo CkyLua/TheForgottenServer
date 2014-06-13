@@ -141,19 +141,13 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 		//Add char list
 		output->AddByte(0x64);
-
-		output->AddByte(1); // number of worlds
-
-		output->AddByte(0); // world id
-		output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
-		output->AddString(g_config.getString(ConfigManager::IP));
-		output->add<uint16_t>(g_config.getNumber(ConfigManager::GAME_PORT));
-		output->AddByte(0);
-
 		output->AddByte((uint8_t)account.charList.size());
+
 		for (const std::string& characterName : account.charList) {
-			output->AddByte(0);
 			output->AddString(characterName);
+			output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
+			output->add<uint32_t>(inet_addr(g_config.getString(ConfigManager::IP).c_str()));
+			output->add<uint16_t>(g_config.getNumber(ConfigManager::GAME_PORT));
 		}
 
 		//Add premium days
