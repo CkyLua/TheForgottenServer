@@ -314,8 +314,6 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	OperatingSystem_t operatingSystem = (OperatingSystem_t)msg.get<uint16_t>();
 	version = msg.get<uint16_t>();
 
-	msg.SkipBytes(5); // U32 clientVersion, U8 clientType
-
 	if (!RSA_decrypt(msg)) {
 		getConnection()->closeConnection();
 		return false;
@@ -338,24 +336,17 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	bool gamemasterFlag = msg.GetByte() != 0;
-	std::string accountName = msg.GetString();
+	uint32_t accountNumber = msg.get<uint32_t>();
 	std::string characterName = msg.GetString();
 	std::string password = msg.GetString();
-
-	uint32_t timeStamp = msg.get<uint32_t>();
-	uint8_t randNumber = msg.GetByte();
-	if (m_challengeTimestamp != timeStamp || m_challengeRandom != randNumber) {
-		getConnection()->closeConnection();
-		return false;
-	}
 
 	if (version < CLIENT_VERSION_MIN || version > CLIENT_VERSION_MAX) {
 		disconnectClient(0x14, "Only clients with protocol " CLIENT_VERSION_STR " allowed!");
 		return false;
 	}
 
-	if (accountName.empty()) {
-		disconnectClient(0x14, "You must enter your account name.");
+	if (accountNumber == 0) {
+		disconnectClient(0x14, "You must enter your account number.");
 		return false;
 	}
 
@@ -381,9 +372,9 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	uint32_t accountId = IOLoginData::gameworldAuthentication(accountName, password, characterName);
+	uint32_t accountId = IOLoginData::gameworldAuthentication(accountNumber, password, characterName);
 	if (accountId == 0) {
-		disconnectClient(0x14, "Account name or password is not correct.");
+		disconnectClient(0x14, "Account number or password is not correct.");
 		return false;
 	}
 

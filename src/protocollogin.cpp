@@ -63,17 +63,9 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	msg.get<uint16_t>();
 	uint16_t version = msg.get<uint16_t>();
 
-	if (version >= 971) {
-		msg.SkipBytes(17);
-	} else {
-		msg.SkipBytes(12);
-	}
-
 	/*
 	 * Skipped bytes:
-	 * 4 bytes: protocolVersion (only 971+)
 	 * 12 bytes: dat, spr, pic signatures (4 bytes each)
-	 * 1 byte: 0 (only 971+)
 	*/
 
 	if (version <= 760) {
@@ -94,7 +86,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
-	std::string accountName = msg.GetString();
+	uint32_t accountId = msg.get<uint32_t>();
 	std::string password = msg.GetString();
 
 	if (version < CLIENT_VERSION_MIN || version > CLIENT_VERSION_MAX) {
@@ -124,14 +116,14 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	if (accountName.empty()) {
-		disconnectClient(0x0A, "Invalid account name.");
+	if (accountId == 0) {
+		disconnectClient(0x0A, "Invalid account number.");
 		return false;
 	}
 
 	Account account;
-	if (!IOLoginData::loginserverAuthentication(accountName, password, account)) {
-		disconnectClient(0x0A, "Account name or password is not correct.");
+	if (!IOLoginData::loginserverAuthentication(accountId, password, account)) {
+		disconnectClient(0x0A, "Account number or password is not correct.");
 		return false;
 	}
 

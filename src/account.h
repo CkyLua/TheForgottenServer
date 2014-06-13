@@ -25,7 +25,6 @@
 struct Account {
 	uint32_t id, lastDay, premiumDays;
 	AccountType_t accountType;
-	std::string name;
 	std::list<std::string> charList;
 
 	Account() {

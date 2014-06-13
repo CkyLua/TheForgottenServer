@@ -5068,7 +5068,7 @@ void Game::updatePremium(Account& account)
 	}
 
 	if (save && !IOLoginData::saveAccount(account)) {
-		std::cout << "> ERROR: Failed to save account: " << account.name << "!" << std::endl;
+		std::cout << "> ERROR: Failed to save account: " << account.id << "!" << std::endl;
 	}
 }
 
