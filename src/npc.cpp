@@ -356,10 +356,7 @@ void Npc::doTurn(Direction dir)
 void Npc::onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint16_t itemId,
                         uint8_t count, uint8_t amount, bool ignore/* = false*/, bool inBackpacks/* = false*/)
 {
-	if (m_npcEventHandler) {
-		m_npcEventHandler->onPlayerTrade(player, callback, itemId, count, amount, ignore, inBackpacks);
-	}
-	player->sendSaleItemList();
+
 }
 
 void Npc::onPlayerEndTrade(Player* player, int32_t buyCallback, int32_t sellCallback)
@@ -885,40 +882,6 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 int32_t NpcScriptInterface::luaCloseShopWindow(lua_State* L)
 {
 	//closeShopWindow(cid)
-	Player* player = g_game.getPlayerByID(popNumber(L));
-	if (!player) {
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		pushBoolean(L, false);
-		return 1;
-	}
-
-	Npc* npc = getScriptEnv()->getNpc();
-	if (!npc) {
-		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
-		pushBoolean(L, false);
-		return 1;
-	}
-
-	int32_t buyCallback;
-	int32_t sellCallback;
-
-	Npc* merchant = player->getShopOwner(buyCallback, sellCallback);
-
-	//Check if we actually have a shop window with this player.
-	if (merchant == npc) {
-		player->sendCloseShop();
-
-		if (buyCallback != -1) {
-			luaL_unref(L, LUA_REGISTRYINDEX, buyCallback);
-		}
-
-		if (sellCallback != -1) {
-			luaL_unref(L, LUA_REGISTRYINDEX, sellCallback);
-		}
-
-		player->setShopOwner(nullptr, -1, -1);
-		npc->removeShopPlayer(player);
-	}
 
 	pushBoolean(L, true);
 	return 1;
@@ -1098,38 +1061,7 @@ int32_t NpcScriptInterface::luaNpcOpenShopWindow(lua_State* L)
 int32_t NpcScriptInterface::luaNpcCloseShopWindow(lua_State* L)
 {
 	// npc:closeShopWindow(player)
-	Player* player = getPlayer(L, 2);
-	if (!player) {
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		pushBoolean(L, false);
-		return 1;
-	}
-
-	Npc* npc = getUserdata<Npc>(L, 1);
-	if (!npc) {
-		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
-		pushBoolean(L, false);
-		return 1;
-	}
-
-	int32_t buyCallback;
-	int32_t sellCallback;
-
-	Npc* merchant = player->getShopOwner(buyCallback, sellCallback);
-	if (merchant == npc) {
-		player->sendCloseShop();
-		if (buyCallback != -1) {
-			luaL_unref(L, LUA_REGISTRYINDEX, buyCallback);
-		}
-
-		if (sellCallback != -1) {
-			luaL_unref(L, LUA_REGISTRYINDEX, sellCallback);
-		}
-
-		player->setShopOwner(nullptr, -1, -1);
-		npc->removeShopPlayer(player);
-	}
-
+	
 	pushBoolean(L, true);
 	return 1;
 }

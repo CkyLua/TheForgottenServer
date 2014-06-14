@@ -1462,31 +1462,12 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 
 void Player::openShopWindow(Npc* npc, const std::list<ShopInfo>& shop)
 {
-	shopItemList = shop;
-	sendShop(npc);
-	sendSaleItemList();
+
 }
 
 bool Player::closeShopWindow(bool sendCloseShopWindow /*= true*/)
 {
-	//unreference callbacks
-	int32_t onBuy;
-	int32_t onSell;
-
-	Npc* npc = getShopOwner(onBuy, onSell);
-	if (!npc) {
-		shopItemList.clear();
-		return false;
-	}
-
-	setShopOwner(nullptr, -1, -1);
-	npc->onPlayerEndTrade(this, onBuy, onSell);
-
-	if (sendCloseShopWindow) {
-		sendCloseShop();
-	}
-
-	shopItemList.clear();
+	
 	return true;
 }
 
@@ -2235,7 +2216,6 @@ void Player::death()
 
 		sendStats();
 		sendSkills();
-		sendReLoginWindow(unfairFightReduction);
 
 		if (getSkull() == SKULL_BLACK) {
 			health = 40;
@@ -3271,14 +3251,7 @@ void Player::postRemoveNotification(Thing* thing, const Cylinder* newParent, int
 
 void Player::updateSaleShopList(uint32_t itemId)
 {
-	auto it = std::find_if(shopItemList.begin(), shopItemList.end(), [itemId] (const ShopInfo& shopInfo) { return shopInfo.itemId == itemId; });
-	if (it == shopItemList.end()) {
-		return;
-	}
 
-	if (client) {
-		client->sendSaleItemList(shopItemList);
-	}
 }
 
 bool Player::hasShopItemForSale(uint32_t itemId, uint8_t subType) const
@@ -4189,7 +4162,6 @@ bool Player::isPremium() const
 void Player::setPremiumDays(int32_t v)
 {
 	premiumDays = v;
-	sendBasicData();
 }
 
 void Player::setGuildLevel(uint8_t newGuildLevel)
@@ -4657,16 +4629,6 @@ bool Player::hasModalWindowOpen(uint32_t modalWindowId) const
 void Player::onModalWindowHandled(uint32_t modalWindowId)
 {
 	modalWindows.remove(modalWindowId);
-}
-
-void Player::sendModalWindow(const ModalWindow& modalWindow)
-{
-	if (!client) {
-		return;
-	}
-
-	modalWindows.push_back(modalWindow.id);
-	client->sendModalWindow(modalWindow);
 }
 
 void Player::clearModalWindows()

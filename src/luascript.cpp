@@ -6198,21 +6198,7 @@ int32_t LuaScriptInterface::luaModalWindowSetPriority(lua_State* L)
 int32_t LuaScriptInterface::luaModalWindowSendToPlayer(lua_State* L)
 {
 	// modalWindow:sendToPlayer(player)
-	Player* player = getPlayer(L, 2);
-	if (!player) {
-		pushNil(L);
-		return 1;
-	}
-
-	ModalWindow* window = getUserdata<ModalWindow>(L, 1);
-	if (window) {
-		if (!player->hasModalWindowOpen(window->id)) {
-			player->sendModalWindow(*window);
-		}
-		pushBoolean(L, true);
-	} else {
-		pushNil(L);
-	}
+	
 	return 1;
 }
 
@@ -9046,30 +9032,14 @@ int32_t LuaScriptInterface::luaPlayerHasLearnedSpell(lua_State* L)
 int32_t LuaScriptInterface::luaPlayerSendTutorial(lua_State* L)
 {
 	// player:sendTutorial(tutorialId)
-	uint8_t tutorialId = getNumber<uint8_t>(L, 2);
-	Player* player = getUserdata<Player>(L, 1);
-	if (player) {
-		player->sendTutorial(tutorialId);
-		pushBoolean(L, true);
-	} else {
-		pushNil(L);
-	}
+	
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaPlayerAddMapMark(lua_State* L)
 {
 	// player:addMapMark(position, type, description)
-	const std::string& description = getString(L, 4);
-	uint8_t type = getNumber<uint8_t>(L, 3);
-	const Position& position = getPosition(L, 2);
-	Player* player = getUserdata<Player>(L, 1);
-	if (player) {
-		player->sendAddMarker(position, type, description);
-		pushBoolean(L, true);
-	} else {
-		pushNil(L);
-	}
+	
 	return 1;
 }
 
@@ -9089,14 +9059,7 @@ int32_t LuaScriptInterface::luaPlayerSave(lua_State* L)
 int32_t LuaScriptInterface::luaPlayerPopupFYI(lua_State* L)
 {
 	// player:popupFYI(message)
-	const std::string& message = getString(L, 2);
-	Player* player = getUserdata<Player>(L, 1);
-	if (player) {
-		player->sendFYIBox(message);
-		pushBoolean(L, true);
-	} else {
-		pushNil(L);
-	}
+	
 	return 1;
 }
 

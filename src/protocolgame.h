@@ -131,14 +131,9 @@ class ProtocolGame : public Protocol
 		void parseSay(NetworkMessage& msg);
 		void parseLookAt(NetworkMessage& msg);
 		void parseLookInBattleList(NetworkMessage& msg);
-		void parseJoinAggression(NetworkMessage& msg);
 		void parseFightModes(NetworkMessage& msg);
 		void parseAttack(NetworkMessage& msg);
 		void parseFollow(NetworkMessage& msg);
-
-		void parseBugReport(NetworkMessage& msg);
-		void parseThankYou(NetworkMessage& msg);
-		void parseDebugAssert(NetworkMessage& msg);
 
 		void parseThrow(NetworkMessage& msg);
 		void parseUseItemEx(NetworkMessage& msg);
@@ -151,28 +146,12 @@ class ProtocolGame : public Protocol
 		void parseTextWindow(NetworkMessage& msg);
 		void parseHouseWindow(NetworkMessage& msg);
 
-		void parseLookInShop(NetworkMessage& msg);
-		void parsePlayerPurchase(NetworkMessage& msg);
-		void parsePlayerSale(NetworkMessage& msg);
-		void parseCloseShop(NetworkMessage& msg);
-
-		void parseQuestLog(NetworkMessage& msg);
-		void parseQuestLine(NetworkMessage& msg);
-
 		void parseInviteToParty(NetworkMessage& msg);
 		void parseJoinParty(NetworkMessage& msg);
 		void parseRevokePartyInvite(NetworkMessage& msg);
 		void parsePassPartyLeadership(NetworkMessage& msg);
 		void parseLeaveParty(NetworkMessage& msg);
-		void parseEnableSharedPartyExperience(NetworkMessage& msg);
 
-		void parseToggleMount(NetworkMessage& msg);
-
-		void parseRuleViolationReport(NetworkMessage& msg);
-
-		void parseModalWindowAnswer(NetworkMessage& msg);
-
-		void parseBrowseField(NetworkMessage& msg);
 		void parseSeekInContainer(NetworkMessage& msg);
 
 		//trade methods
@@ -181,20 +160,9 @@ class ProtocolGame : public Protocol
 		void parseAcceptTrade(NetworkMessage& msg);
 		void parseCloseTrade();
 
-		//
-		void parseGetObjectInfo(NetworkMessage& msg);
-
-		//market methods
-		void parseMarketLeave();
-		void parseMarketBrowse(NetworkMessage& msg);
-		void parseMarketCreateOffer(NetworkMessage& msg);
-		void parseMarketCancelOffer(NetworkMessage& msg);
-		void parseMarketAcceptOffer(NetworkMessage& msg);
-
 		//VIP methods
 		void parseAddVip(NetworkMessage& msg);
 		void parseRemoveVip(NetworkMessage& msg);
-		void parseEditVip(NetworkMessage& msg);
 
 		void parseRotateItem(NetworkMessage& msg);
 
@@ -206,7 +174,6 @@ class ProtocolGame : public Protocol
 		void parseOpenChannel(NetworkMessage& msg);
 		void parseOpenPrivateChannel(NetworkMessage& msg);
 		void parseCloseChannel(NetworkMessage& msg);
-		void parseCloseNpc(NetworkMessage& msg);
 
 		//Send functions
 		void sendChannelMessage(const std::string& author, const std::string& text, SpeakClasses type, uint16_t channel);
@@ -218,7 +185,6 @@ class ProtocolGame : public Protocol
 		void sendOpenPrivateChannel(const std::string& receiver);
 		void sendToChannel(const Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId);
 		void sendIcons(uint16_t icons);
-		void sendFYIBox(const std::string& message);
 
 		void sendDistanceShoot(const Position& from, const Position& to, uint8_t type);
 		void sendMagicEffect(const Position& pos, uint8_t type);
@@ -229,40 +195,18 @@ class ProtocolGame : public Protocol
 		void sendCreatureTurn(const Creature* creature, uint32_t stackpos);
 		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = nullptr);
 
-		void sendQuestLog();
-		void sendQuestLine(const Quest* quest);
-
 		void sendCancelWalk();
 		void sendChangeSpeed(const Creature* creature, uint32_t speed);
 		void sendCancelTarget();
 		void sendCreatureVisible(const Creature* creature, bool visible);
 		void sendCreatureOutfit(const Creature* creature, const Outfit_t& outfit);
 		void sendStats();
-		void sendBasicData();
 		void sendTextMessage(MessageClasses mclass, const std::string& message, Position* pos = nullptr, uint32_t exp = 0, TextColor_t color = TEXTCOLOR_NONE);
 		void sendTextMessage(const TextMessage& message);
-		void sendReLoginWindow(uint8_t unfairFightReduction);
 
-		void sendTutorial(uint8_t tutorialId);
-		void sendAddMarker(const Position& pos, uint8_t markType, const std::string& desc);
-
-		void sendCreatureWalkthrough(const Creature* creature, bool walkthrough);
 		void sendCreatureShield(const Creature* creature);
 		void sendCreatureSkull(const Creature* creature);
-		void sendCreatureType(uint32_t creatureId, uint8_t creatureType);
-		void sendCreatureHelpers(uint32_t creatureId, uint16_t helpers);
 
-		void sendShop(Npc* npc, const ShopInfoList& itemList);
-		void sendCloseShop();
-		void sendSaleItemList(const std::list<ShopInfo>& shop);
-		void sendMarketEnter(uint32_t depotId);
-		void sendMarketLeave();
-		void sendMarketBrowseItem(uint16_t itemId, const MarketOfferList& buyOffers, const MarketOfferList& sellOffers);
-		void sendMarketAcceptOffer(const MarketOfferEx& offer);
-		void sendMarketBrowseOwnOffers(const MarketOfferList& buyOffers, const MarketOfferList& sellOffers);
-		void sendMarketCancelOffer(const MarketOfferEx& offer);
-		void sendMarketBrowseOwnHistory(const HistoryMarketOfferList& buyOffers, const HistoryMarketOfferList& sellOffers);
-		void sendMarketDetail(uint16_t itemId);
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack);
 		void sendCloseTrade();
 
@@ -274,16 +218,10 @@ class ProtocolGame : public Protocol
 		void sendUpdatedVIPStatus(uint32_t guid, VipStatus_t newStatus);
 		void sendVIP(uint32_t guid, const std::string& name, const std::string& description, uint32_t icon, bool notify, VipStatus_t status);
 
-		void sendPendingStateEntered();
-		void sendEnterWorld();
-
 		void sendCreatureLight(const Creature* creature);
 		void sendWorldLight(const LightInfo& lightInfo);
 
 		void sendCreatureSquare(const Creature* creature, SquareColor_t color);
-
-		void sendSpellCooldown(uint8_t spellId, uint32_t time);
-		void sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t time);
 
 		//tiles
 		void sendMapDescription(const Position& pos);
@@ -315,7 +253,6 @@ class ProtocolGame : public Protocol
 		                       uint32_t secondaryDamage = 0, TextColor_t secondaryColor = TEXTCOLOR_NONE);
 		void sendHealMessage(MessageClasses mclass, const std::string& message, const Position& pos, uint32_t heal, TextColor_t color);
 		void sendExperienceMessage(MessageClasses mclass, const std::string& message, const Position& pos, uint32_t exp, TextColor_t color);
-		void sendModalWindow(const ModalWindow& modalWindow);
 
 		//Help functions
 
@@ -362,10 +299,7 @@ class ProtocolGame : public Protocol
 
 		//inventory
 		void SetInventoryItem(NetworkMessage& msg, slots_t slot, const Item* item);
-
-		//shop
-		void AddShopItem(NetworkMessage& msg, const ShopInfo& item);
-
+	
 		//otclient
 		void parseExtendedOpcode(NetworkMessage& msg);
 

@@ -174,12 +174,6 @@ class Player : public Creature, public Cylinder
 		bool hasMount(const Mount* mount) const;
 		void dismount();
 
-		void sendFYIBox(const std::string& message) {
-			if (client) {
-				client->sendFYIBox(message);
-			}
-		}
-
 		void setGUID(uint32_t _guid) {
 			guid = _guid;
 		}
@@ -811,34 +805,9 @@ class Player : public Creature, public Cylinder
 				client->sendCreatureLight(creature);
 			}
 		}
-		void sendCreatureWalkthrough(const Creature* creature, bool walkthrough) {
-			if (client) {
-				client->sendCreatureWalkthrough(creature, walkthrough);
-			}
-		}
 		void sendCreatureShield(const Creature* creature) {
 			if (client) {
 				client->sendCreatureShield(creature);
-			}
-		}
-		void sendCreatureType(uint32_t creatureId, uint8_t creatureType) {
-			if (client) {
-				client->sendCreatureType(creatureId, creatureType);
-			}
-		}
-		void sendCreatureHelpers(uint32_t creatureId, uint16_t helpers) {
-			if (client) {
-				client->sendCreatureHelpers(creatureId, helpers);
-			}
-		}
-		void sendSpellCooldown(uint8_t spellId, uint32_t time) {
-			if (client) {
-				client->sendSpellCooldown(spellId, time);
-			}
-		}
-		void sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t time) {
-			if (client) {
-				client->sendSpellGroupCooldown(groupId, time);
 			}
 		}
 
@@ -859,7 +828,6 @@ class Player : public Creature, public Cylinder
 				client->sendExperienceMessage(mclass, message, pos, exp, color);
 			}
 		}
-		void sendModalWindow(const ModalWindow& modalWindow);
 
 		//container
 		void sendAddContainerItem(const Container* container, const Item* item);
@@ -963,11 +931,6 @@ class Player : public Creature, public Cylinder
 			}
 		}
 		void sendStats();
-		void sendBasicData() const {
-			if (client) {
-				client->sendBasicData();
-			}
-		}
 		void sendSkills() const {
 			if (client) {
 				client->sendSkills();
@@ -983,11 +946,6 @@ class Player : public Creature, public Cylinder
 				client->sendTextMessage(message);
 			}
 		}
-		void sendReLoginWindow(uint8_t unfairFightReduction) const {
-			if (client) {
-				client->sendReLoginWindow(unfairFightReduction);
-			}
-		}
 		void sendTextWindow(Item* item, uint16_t maxlen, bool canWrite) const {
 			if (client) {
 				client->sendTextWindow(windowTextId, item, maxlen, canWrite);
@@ -1001,62 +959,6 @@ class Player : public Creature, public Cylinder
 		void sendToChannel(const Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId) const {
 			if (client) {
 				client->sendToChannel(creature, type, text, channelId);
-			}
-		}
-		void sendShop(Npc* npc) const {
-			if (client) {
-				client->sendShop(npc, shopItemList);
-			}
-		}
-		void sendSaleItemList() const {
-			if (client) {
-				client->sendSaleItemList(shopItemList);
-			}
-		}
-		void sendCloseShop() const {
-			if (client) {
-				client->sendCloseShop();
-			}
-		}
-		void sendMarketEnter(uint32_t depotId) const {
-			if (client) {
-				client->sendMarketEnter(depotId);
-			}
-		}
-		void sendMarketLeave() {
-			inMarket = false;
-			if (client) {
-				client->sendMarketLeave();
-			}
-		}
-		void sendMarketBrowseItem(uint16_t itemId, const MarketOfferList& buyOffers, const MarketOfferList& sellOffers) const {
-			if (client) {
-				client->sendMarketBrowseItem(itemId, buyOffers, sellOffers);
-			}
-		}
-		void sendMarketBrowseOwnOffers(const MarketOfferList& buyOffers, const MarketOfferList& sellOffers) const {
-			if (client) {
-				client->sendMarketBrowseOwnOffers(buyOffers, sellOffers);
-			}
-		}
-		void sendMarketBrowseOwnHistory(const HistoryMarketOfferList& buyOffers, const HistoryMarketOfferList& sellOffers) const {
-			if (client) {
-				client->sendMarketBrowseOwnHistory(buyOffers, sellOffers);
-			}
-		}
-		void sendMarketDetail(uint16_t itemId) const {
-			if (client) {
-				client->sendMarketDetail(itemId);
-			}
-		}
-		void sendMarketAcceptOffer(const MarketOfferEx& offer) const {
-			if (client) {
-				client->sendMarketAcceptOffer(offer);
-			}
-		}
-		void sendMarketCancelOffer(const MarketOfferEx& offer) const {
-			if (client) {
-				client->sendMarketCancelOffer(offer);
 			}
 		}
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack) const {
@@ -1098,31 +1000,6 @@ class Player : public Creature, public Cylinder
 		void sendChannel(uint16_t channelId, const std::string& channelName, const UsersMap* channelUsers, const InvitedMap* invitedUsers) {
 			if (client) {
 				client->sendChannel(channelId, channelName, channelUsers, invitedUsers);
-			}
-		}
-		void sendTutorial(uint8_t tutorialId) {
-			if (client) {
-				client->sendTutorial(tutorialId);
-			}
-		}
-		void sendAddMarker(const Position& pos, uint8_t markType, const std::string& desc) {
-			if (client) {
-				client->sendAddMarker(pos, markType, desc);
-			}
-		}
-		void sendQuestLog() {
-			if (client) {
-				client->sendQuestLog();
-			}
-		}
-		void sendQuestLine(const Quest* quest) {
-			if (client) {
-				client->sendQuestLine(quest);
-			}
-		}
-		void sendEnterWorld() {
-			if (client) {
-				client->sendEnterWorld();
 			}
 		}
 		void sendNetworkMessage(const NetworkMessage& message) {

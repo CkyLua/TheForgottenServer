@@ -502,11 +502,7 @@ bool Action::decreaseItemId(Player* player, Item* item, const PositionEx& posFro
 
 bool Action::enterMarket(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	if (player->getLastDepotId() == -1) {
-		return false;
-	}
 
-	player->sendMarketEnter(player->getLastDepotId());
 	return true;
 }
 
