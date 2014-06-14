@@ -737,11 +737,6 @@ class Player : public Creature, public Cylinder
 				client->sendChannelMessage(author, text, type, channel);
 			}
 		}
-		void sendChannelEvent(uint16_t channelId, const std::string& playerName, ChannelEvent_t channelEvent) {
-			if (client) {
-				client->sendChannelEvent(channelId, playerName, channelEvent);
-			}
-		}
 		void sendCreatureAppear(const Creature* creature, const Position& pos, bool isLogin) {
 			if (client) {
 				client->sendAddCreature(creature, pos, creature->getTile()->getClientIndexOfThing(this, creature), isLogin);
@@ -938,7 +933,7 @@ class Player : public Creature, public Cylinder
 		}
 		void sendTextMessage(MessageClasses mclass, const std::string& message, Position* pos = nullptr, uint32_t value = 0, TextColor_t color = TEXTCOLOR_NONE) const {
 			if (client) {
-				client->sendTextMessage(mclass, message, pos, value, color);
+				client->sendTextMessage(mclass, message);
 			}
 		}
 		void sendTextMessage(const TextMessage& message) const {

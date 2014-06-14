@@ -177,7 +177,6 @@ class ProtocolGame : public Protocol
 
 		//Send functions
 		void sendChannelMessage(const std::string& author, const std::string& text, SpeakClasses type, uint16_t channel);
-		void sendChannelEvent(uint16_t channelId, const std::string& playerName, ChannelEvent_t channelEvent);
 		void sendClosePrivate(uint16_t channelId);
 		void sendCreatePrivateChannel(uint16_t channelId, const std::string& channelName);
 		void sendChannelsDialog();
@@ -201,7 +200,7 @@ class ProtocolGame : public Protocol
 		void sendCreatureVisible(const Creature* creature, bool visible);
 		void sendCreatureOutfit(const Creature* creature, const Outfit_t& outfit);
 		void sendStats();
-		void sendTextMessage(MessageClasses mclass, const std::string& message, Position* pos = nullptr, uint32_t exp = 0, TextColor_t color = TEXTCOLOR_NONE);
+		void sendTextMessage(MessageClasses mclass, const std::string& message);
 		void sendTextMessage(const TextMessage& message);
 
 		void sendCreatureShield(const Creature* creature);
@@ -268,7 +267,6 @@ class ProtocolGame : public Protocol
 		                       int32_t width, int32_t height, NetworkMessage& msg);
 
 		void AddTextMessage(NetworkMessage& msg, MessageClasses mclass, const std::string& message);
-		void AddTextMessageEx(NetworkMessage& msg, MessageClasses mclass, const std::string& message, const Position& pos, uint32_t value, TextColor_t color);
 		void AddMagicEffect(NetworkMessage& msg, const Position& pos, uint8_t type);
 		void AddDistanceShoot(NetworkMessage& msg, const Position& from, const Position& to, uint8_t type);
 		void AddCreature(NetworkMessage& msg, const Creature* creature, bool known, uint32_t remove);
