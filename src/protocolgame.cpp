@@ -391,27 +391,9 @@ void ProtocolGame::onConnect()
 {
 	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if (output) {
-		static std::random_device rd;
-		static std::ranlux24 generator(rd());
-		static std::uniform_int_distribution<uint16_t> randNumber(0x00, 0xFF);
-
-		// Skip checksum
-		output->SkipBytes(sizeof(uint32_t));
-
 		// Packet length & type
 		output->add<uint16_t>(0x0006);
 		output->AddByte(0x1F);
-
-		// Add timestamp & random number
-		m_challengeTimestamp = static_cast<uint32_t>(time(nullptr));
-		output->add<uint32_t>(m_challengeTimestamp);
-
-		m_challengeRandom = randNumber(generator);
-		output->AddByte(m_challengeRandom);
-
-		// Go back and write checksum
-		output->SkipBytes(-12);
-		output->add<uint32_t>(adlerChecksum(output->getOutputBuffer() + sizeof(uint32_t), 8));
 
 		OutputMessagePool::getInstance()->send(output);
 	}

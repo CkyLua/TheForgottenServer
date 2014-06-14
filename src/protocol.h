@@ -30,7 +30,7 @@ class RSA;
 class Protocol
 {
 	public:
-		Protocol(Connection_ptr connection) : m_connection(connection), m_key(), m_refCount(), m_encryptionEnabled(false), m_checksumEnabled(true), m_rawMessages(false) {}
+		Protocol(Connection_ptr connection) : m_connection(connection), m_key(), m_refCount(), m_encryptionEnabled(false), m_rawMessages(false) {}
 
 		// non-copyable
 		Protocol(const Protocol&) = delete;
@@ -78,13 +78,7 @@ class Protocol
 		void setXTEAKey(const uint32_t* key) {
 			memcpy(m_key, key, sizeof(uint32_t) * 4);
 		}
-		void enableChecksum() {
-			m_checksumEnabled = true;
-		}
-		void disableChecksum() {
-			m_checksumEnabled = false;
-		}
-
+	
 		void XTEA_encrypt(OutputMessage& msg) const;
 		bool XTEA_decrypt(NetworkMessage& msg) const;
 		bool RSA_decrypt(NetworkMessage& msg);
@@ -104,7 +98,6 @@ class Protocol
 		uint32_t m_key[4];
 		uint32_t m_refCount;
 		bool m_encryptionEnabled;
-		bool m_checksumEnabled;
 		bool m_rawMessages;
 };
 

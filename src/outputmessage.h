@@ -48,11 +48,7 @@ class OutputMessage : public NetworkMessage
 			add_header<uint16_t>(m_MsgSize);
 		}
 
-		void addCryptoHeader(bool addChecksum) {
-			if (addChecksum) {
-				add_header<uint32_t>(adlerChecksum(m_MsgBuf + m_outputBufferStart, m_MsgSize));
-			}
-
+		void addCryptoHeader() {
 			add_header<uint16_t>(m_MsgSize);
 		}
 
@@ -75,14 +71,14 @@ class OutputMessage : public NetworkMessage
 
 		inline void append(const NetworkMessage& msg) {
 			int32_t msgLen = msg.getMessageLength();
-			memcpy(m_MsgBuf + m_ReadPos, msg.getBuffer() + 8, msgLen);
+			memcpy(m_MsgBuf + m_ReadPos, msg.getBuffer() + 2, msgLen);
 			m_MsgSize += msgLen;
 			m_ReadPos += msgLen;
 		}
 
 		inline void append(OutputMessage_ptr msg) {
 			int32_t msgLen = msg->getMessageLength();
-			memcpy(m_MsgBuf + m_ReadPos, msg->getBuffer() + 8, msgLen);
+			memcpy(m_MsgBuf + m_ReadPos, msg->getBuffer() + 2, msgLen);
 			m_MsgSize += msgLen;
 			m_ReadPos += msgLen;
 		}
@@ -112,9 +108,8 @@ class OutputMessage : public NetworkMessage
 			m_frame = 0;
 			//allocate enough size for headers
 			//2 bytes for unencrypted message size
-			//4 bytes for checksum
 			//2 bytes for encrypted message size
-			m_outputBufferStart = 8;
+			m_outputBufferStart = 4;
 
 			//setState have to be the last one
 			setState(OutputMessage::STATE_FREE);

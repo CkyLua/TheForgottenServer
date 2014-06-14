@@ -34,7 +34,7 @@ void Protocol::onSendMessage(OutputMessage_ptr msg)
 
 		if (m_encryptionEnabled) {
 			XTEA_encrypt(*msg);
-			msg->addCryptoHeader(m_checksumEnabled);
+			msg->addCryptoHeader();
 		}
 	}
 
@@ -85,63 +85,68 @@ void Protocol::deleteProtocolTask()
 
 void Protocol::XTEA_encrypt(OutputMessage& msg) const
 {
-	const uint32_t delta = 0x61C88647;
+	uint32_t k[4];
+	k[0] = m_key[0]; k[1] = m_key[1]; k[2] = m_key[2]; k[3] = m_key[3];
 
-	// the message must be a multiple of 8
-	size_t paddingBytes = msg.getMessageLength() & 7;
-	if (paddingBytes != 0) {
-		msg.AddPaddingBytes(8 - paddingBytes);
+	int32_t messageLength = msg.getMessageLength();
+
+	//add bytes until reach 8 multiple
+	uint32_t n;
+	if ((messageLength % 8) != 0){
+		n = 8 - (messageLength % 8);
+		msg.AddPaddingBytes(n);
+		messageLength = messageLength + n;
 	}
 
+	int read_pos = 0;
 	uint32_t* buffer = (uint32_t*)msg.getOutputBuffer();
-	const size_t messageLength = msg.getMessageLength() / 4;
-	size_t readPos = 0;
-	const uint32_t k[] = {m_key[0], m_key[1], m_key[2], m_key[3]};
-	while (readPos < messageLength) {
-		uint32_t v0 = buffer[readPos], v1 = buffer[readPos + 1];
+	while (read_pos < messageLength / 4){
+		uint32_t v0 = buffer[read_pos], v1 = buffer[read_pos + 1];
+		uint32_t delta = 0x61C88647;
 		uint32_t sum = 0;
 
-		for (int32_t i = 32; --i >= 0;) {
+		for (int32_t i = 0; i < 32; ++i) {
 			v0 += ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + k[sum & 3]);
 			sum -= delta;
 			v1 += ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + k[sum >> 11 & 3]);
 		}
-
-		buffer[readPos++] = v0;
-		buffer[readPos++] = v1;
+		buffer[read_pos] = v0; buffer[read_pos + 1] = v1;
+		read_pos = read_pos + 2;
 	}
 }
 
 bool Protocol::XTEA_decrypt(NetworkMessage& msg) const
 {
-	if (((msg.getMessageLength() - 6) & 7) != 0) {
+	if ((msg.getMessageLength() - 2) % 8 != 0){
+		std::cout << "Failure: [Protocol::XTEA_decrypt]. Not valid encrypted message size"
+			<< std::endl;
 		return false;
 	}
 
-	const uint32_t delta = 0x61C88647;
+	uint32_t k[4];
+	k[0] = m_key[0]; k[1] = m_key[1]; k[2] = m_key[2]; k[3] = m_key[3];
 
-	uint32_t* buffer = (uint32_t*)(msg.getBuffer() + msg.getReadPos());
-	const size_t messageLength = (msg.getMessageLength() - 6) / 4;
-	size_t readPos = 0;
-	const uint32_t k[] = {m_key[0], m_key[1], m_key[2], m_key[3]};
-	while (readPos < messageLength) {
-		uint32_t v0 = buffer[readPos], v1 = buffer[readPos + 1];
+	uint32_t* buffer = (uint32_t*)msg.getBodyBuffer();
+	int read_pos = 0;
+	int32_t messageLength = msg.getMessageLength();
+	while (read_pos < messageLength / 4){
+		uint32_t v0 = buffer[read_pos], v1 = buffer[read_pos + 1];
+		uint32_t delta = 0x61C88647;
 		uint32_t sum = 0xC6EF3720;
 
-		for (int32_t i = 32; --i >= 0;) {
+		for (int32_t i = 0; i<32; i++) {
 			v1 -= ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + k[sum >> 11 & 3]);
 			sum += delta;
 			v0 -= ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + k[sum & 3]);
 		}
-
-		buffer[readPos++] = v0;
-		buffer[readPos++] = v1;
+		buffer[read_pos] = v0; buffer[read_pos + 1] = v1;
+		read_pos = read_pos + 2;
 	}
 
-	//
-
 	int tmp = msg.get<uint16_t>();
-	if (tmp > msg.getMessageLength() - 8) {
+	if (tmp > msg.getMessageLength() - 4){
+		std::cout << "Failure: [Protocol::XTEA_decrypt]. Not valid unencrypted message size"
+			<< std::endl;
 		return false;
 	}
 

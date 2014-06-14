@@ -32,9 +32,7 @@ class NetworkMessage
 {
 	public:
 		enum { header_length = 2 };
-		enum { crypto_length = 4 };
-		enum { xtea_multiple = 8 };
-		enum { max_body_length = NETWORKMESSAGE_MAXSIZE - header_length - crypto_length - xtea_multiple };
+		enum { max_body_length = NETWORKMESSAGE_MAXSIZE - header_length };
 		enum { max_protocol_body_length = max_body_length - 10 };
 
 		// constructor/destructor
@@ -50,7 +48,7 @@ class NetworkMessage
 		void Reset() {
 			m_overrun = false;
 			m_MsgSize = 0;
-			m_ReadPos = 8;
+			m_ReadPos = 4;
 		}
 
 	public:
@@ -153,7 +151,7 @@ class NetworkMessage
 		}
 
 		inline bool canRead(int32_t size) {
-			if ((m_ReadPos + size) > (m_MsgSize + 8) || size >= (NETWORKMESSAGE_MAXSIZE - m_ReadPos)) {
+			if (size >= (NETWORKMESSAGE_MAXSIZE - m_ReadPos)) {
 				m_overrun = true;
 				return false;
 			}

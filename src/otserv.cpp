@@ -38,7 +38,6 @@
 #include "tools.h"
 #include "rsa.h"
 #include "protocolgame.h"
-#include "protocolold.h"
 #include "protocollogin.h"
 #include "protocolstatus.h"
 #include "house.h"
@@ -263,10 +262,6 @@ void mainLoader(int argc, char* argv[], ServiceManager* services)
 
 	// OT protocols
 	services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
-
-	// Legacy protocols
-	services->add<ProtocolOldLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
-	services->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT));
 
 	Houses::getInstance().payHouses();
 	g_game.checkExpiredMarketOffers();

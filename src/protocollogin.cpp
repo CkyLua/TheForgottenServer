@@ -67,6 +67,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	 * Skipped bytes:
 	 * 12 bytes: dat, spr, pic signatures (4 bytes each)
 	*/
+	msg.SkipBytes(12);
 
 	if (version <= 760) {
 		disconnectClient(0x0A, "Only clients with protocol " CLIENT_VERSION_STR " allowed!");

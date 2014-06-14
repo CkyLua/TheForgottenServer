@@ -281,28 +281,13 @@ void Connection::parsePacket(const boost::system::error_code& error)
 		m_packetsSent = 0;
 	}
 
-	//Check packet checksum
-	uint32_t checksum;
-	int32_t len = m_msg.getMessageLength() - m_msg.getReadPos() - 4;
-	if (len > 0) {
-		checksum = adlerChecksum(m_msg.getBuffer() + m_msg.getReadPos() + 4, len);
-	} else {
-		checksum = 0;
-	}
-
-	uint32_t recvChecksum = m_msg.get<uint32_t>();
-	if (recvChecksum != checksum) {
-		// it might not have been the checksum, step back
-		m_msg.SkipBytes(-4);
-	}
-
 	if (!m_receivedFirst) {
 		// First message received
 		m_receivedFirst = true;
 
 		if (!m_protocol) {
 			// Game protocol has already been created at this point
-			m_protocol = m_service_port->make_protocol(recvChecksum == checksum, m_msg);
+			m_protocol = m_service_port->make_protocol(m_msg);
 			if (!m_protocol) {
 				closeConnection();
 				m_connectionLock.unlock();
