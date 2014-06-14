@@ -371,7 +371,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 	return RET_CANNOTUSETHISOBJECT;
 }
 
-bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* item, bool isHotkey)
+bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* item)
 {
 	if (!player->canDoAction()) {
 		return false;
@@ -380,10 +380,6 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 	player->setNextActionTask(nullptr);
 	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL));
 	player->stopWalk();
-
-	if (isHotkey) {
-		showUseHotkeyMessage(player, item->getID(), player->__getItemTypeCount(item->getID(), -1));
-	}
 
 	ReturnValue ret = internalUseItem(player, pos, index, item, 0);
 	if (ret != RET_NOERROR) {
@@ -395,7 +391,7 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 }
 
 bool Actions::useItemEx(Player* player, const Position& fromPos, const Position& toPos,
-                        uint8_t toStackPos, Item* item, bool isHotkey, uint32_t creatureId /* = 0*/)
+                        uint8_t toStackPos, Item* item, uint32_t creatureId /* = 0*/)
 {
 	if (!player->canDoAction()) {
 		return false;
@@ -417,10 +413,6 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 		return false;
 	}
 
-	if (isHotkey) {
-		showUseHotkeyMessage(player, item->getID(), player->__getItemTypeCount(item->getID(), -1));
-	}
-
 	int32_t fromStackPos = item->getParent()->__getIndexOfThing(item);
 	PositionEx fromPosEx(fromPos, fromStackPos);
 	PositionEx toPosEx(toPos, toStackPos);
@@ -434,22 +426,6 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 	}
 
 	return true;
-}
-
-void Actions::showUseHotkeyMessage(Player* player, int32_t id, uint32_t count)
-{
-	const ItemType& it = Item::items[id];
-	std::ostringstream ss;
-
-	if (!it.showCount) {
-		ss << "Using one of " << it.name << "...";
-	} else if (count == 1) {
-		ss << "Using the last " << it.name << "...";
-	} else {
-		ss << "Using one of " << count << ' ' << it.getPluralName() << "...";
-	}
-
-	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 }
 
 bool Actions::hasAction(const Item* item)

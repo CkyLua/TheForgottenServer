@@ -79,9 +79,9 @@ class Actions : public BaseEvents
 		Actions();
 		virtual ~Actions();
 
-		bool useItem(Player* player, const Position& pos, uint8_t index, Item* item, bool isHotkey);
+		bool useItem(Player* player, const Position& pos, uint8_t index, Item* item);
 		bool useItemEx(Player* player, const Position& fromPos, const Position& toPos,
-		               uint8_t toStackPos, Item* item, bool isHotkey, uint32_t creatureId = 0);
+		               uint8_t toStackPos, Item* item, uint32_t creatureId = 0);
 
 		ReturnValue canUse(const Player* player, const Position& pos);
 		ReturnValue canUse(const Player* player, const Position& pos, const Item* item);
@@ -92,7 +92,6 @@ class Actions : public BaseEvents
 	protected:
 		ReturnValue internalUseItem(Player* player, const Position& pos,
 		                            uint8_t index, Item* item, uint32_t creatureId);
-		static void showUseHotkeyMessage(Player* player, int32_t id, uint32_t count);
 
 		virtual void clear();
 		virtual LuaScriptInterface& getScriptInterface();

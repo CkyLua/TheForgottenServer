@@ -54,9 +54,9 @@ maxMarketOffersAtATimePerPlayer = 100
 
 -- MySQL
 mysqlHost = "127.0.0.1"
-mysqlUser = "forgottenserver"
-mysqlPass = ""
-mysqlDatabase = "forgottenserver"
+mysqlUser = "root"
+mysqlPass = "9ia2yszg"
+mysqlDatabase = "tibia"
 mysqlPort = 3306
 
 -- Misc.
