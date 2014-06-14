@@ -9,7 +9,11 @@ The Forgotten Server is a free and open-source MMORPG server emulator written in
 
 ### Bugs
 
-
-
+	Can only make it to charlist! Can't log in! Still in the downgrade process!
+	
 ### Todo
 
+	Remove unused code
+	Remove unused code from data
+	Perform protocolgame changes to work with Tibia 7.72
+	Mailboxes supporting town destination
